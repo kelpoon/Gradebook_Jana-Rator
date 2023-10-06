@@ -1,13 +1,22 @@
 from docx.api import Document
+import docx
 
 # Load the first table from your document. In your example file,
 # there is only one table, so I just grab the first one.
-document = Document('test.docx')
+document = docx.Document('test.docx')
 table = document.tables[0]
 
 # Data will be a list of rows represented as dictionaries
 # containing each row's data.
 data = []
+
+# for paragraph in document.paragraphs:
+#     for run in paragraph.runs:
+#         if run.font.highlight_color is not None:  #Here I want to add the highlighted condition too
+#             data.append("1")
+#         print(run.text)
+
+table.cell(1,1).paragraphs[0].runs[0].font.highlight_color
 
 keys = None
 for i, row in enumerate(table.rows):
@@ -26,4 +35,4 @@ for i, row in enumerate(table.rows):
     if row_data.font.highlight_color is not None:
         data.append(row_data)
 
-print(data)
+# print(data)
