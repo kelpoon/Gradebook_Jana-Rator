@@ -56,17 +56,90 @@ for t, table in enumerate(document.tables):
                 numHighlightedRuns = 0
                 text = paragraph.text
                 for r2, run in enumerate(paragraph.runs):
-                    if run.font.highlight_color is not None:
-                        numHighlightedRuns += 1
-                score = numHighlightedRuns / len(paragraph.runs)        # probably 1 or 0.5
-                if (c == 1):
-                    highlightedFoundationals.append((text, score))
-                if (c == 2):
-                    highlightedProficients.append((text, score))
-                if (c == 3):
-                    highlightedExemplarys.append((text, score))
+                    if (len(paragraph.runs) == 1):
+                        if (c == 1):
+                            if paragraph.runs[0].font.highlight_color == 10:
+                                highlightedFoundationals.append((text, 1))
+                            elif paragraph.runs[0].font.highlight_color == 4:
+                                highlightedFoundationals.append((text, 0.5))
+                        if (c == 2):
+                            if paragraph.runs[0].font.highlight_color == 10:
+                                highlightedProficients.append((text, 1))
+                            elif paragraph.runs[0].font.highlight_color == 4:
+                                highlightedProficients.append((text, 0.5))
+                        if (c == 3):
+                            if paragraph.runs[0].font.highlight_color == 10:
+                                highlightedExemplarys.append((text, 1))
+                            elif paragraph.runs[0].font.highlight_color == 4:
+                                highlightedExemplarys.append((text, 0.5))
+                    else:
+                        colors_foundational = []
+                        colors_proficient = []
+                        colors_exemplary = []
+                        if (c == 1):
+                    
+                           for i in range(len(paragraph.runs)):
+                               colors_foundational.append(paragraph.runs[i].font.highlight_color)
+                            
+                                                
+                        if (c == 2):
+                            for i in range(len(paragraph.runs)):
+                               colors_proficient.append(paragraph.runs[i].font.highlight_color)
 
-                # just for nice output to the terminal
+                        if (c == 3):
+                            for i in range(len(paragraph.runs)):
+                               colors_exemplary.append(paragraph.runs[i].font.highlight_color)
+                        colors_foundational = list(set(colors_foundational))
+                        colors_proficient = list(set(colors_proficient))
+                        colors_exemplary = list(set(colors_exemplary))
+                        
+                        
+                        if len(colors_foundational) == 1:
+                            if colors_foundational[0] == 10:
+                                highlightedFoundationals.append((text,1))
+                            if colors_foundational[0] == 4:
+                                highlightedFoundationals.append((text,.5))
+                            
+                        elif len(colors_foundational) > 1:
+                            if 10 and 4 in colors_foundational:
+                                highlightedFoundationals.append((text,.75))
+                            elif 10 in colors_foundational:
+                                highlightedFoundationals.append((text,.5))
+                            elif 4 in colors_foundational:
+                                highlightedFoundationals.append([text,.25])
+                        
+
+                        if len(colors_proficient) == 1:
+                            if colors_proficient[0] == 10:
+                                highlightedProficients.append((text,1))
+                            if colors_proficient[0] == 4:
+                                highlightedProficients.append((text,.5))
+
+                            
+                        elif len(colors_proficient) > 1:
+                            if 10 and 4 in colors_proficient:
+                                highlightedProficients.append((text,.75))
+                            elif 10 in colors_proficient:
+                                highlightedProficients.append((text,.5))
+                            elif 4 in colors_proficient:
+                                highlightedProficients.append((text,.25))
+
+                        if len(colors_exemplary) == 1:
+                            if colors_exemplary[0] == 10:
+                                highlightedExemplarys.append((text,1))
+                            if colors_exemplary[0] == 4:
+                                highlightedExemplarys.append((text,.5))
+
+                            
+                        elif len(colors_exemplary) > 1:
+                            if 10 and 4 in colors_exemplary:
+                                highlightedExemplarys.append((text,.75))
+                            elif 10 in colors_exemplary:
+                                highlightedExemplarys.append((text,.5))
+                            elif 4 in colors_exemplary:
+                                highlightedExemplarys.append((text,.25))
+                    
+                    
                 for r2, run in enumerate(paragraph.runs):
                     if run.font.highlight_color is not None:
                         print(colored("*Table %d, Row %d, Cell %d, Paragraph %d, Run %d: %s" % (t, r, c, p, r2, run.text), convert_wd_color_index_to_termcolor(run.font.highlight_color)))
@@ -89,3 +162,4 @@ print("\n\n========= EXEMPLARYS ==========")
 highlightedExemplarys = list(set(highlightedExemplarys))
 # print(highlightedExemplarys)
 print(calculateScoreFromHighlights(highlightedExemplarys))
+
