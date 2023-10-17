@@ -20,10 +20,8 @@ SHOW_EVERYTHING_INCLUDING_NON_HIGHLIGHTED = False
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = '1-CZJljjGtjP9J2AX5n80jlOdPWBCvum5pm7F8rDS510'
 
-service = build('sheets', 'v4', credentials=creds)
 
         # Call the Sheets API
-sheet = service.spreadsheets()
 #result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
 #                                   range="GRADES!A1:G13").execute()
 #values = result.get('values', [])
@@ -32,6 +30,9 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SERVICE_ACCOUNT_FILE = 'keys.json'
 creds = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+service = build('sheets', 'v4', credentials=creds)
+sheet = service.spreadsheets()
+
 
 # for outputting pretty colors to the terminal
 def convert_wd_color_index_to_termcolor(color_index):
@@ -86,86 +87,72 @@ for t, table in enumerate(document.tables):
                 numHighlightedRuns = 0
                 text = paragraph.text
                 for r2, run in enumerate(paragraph.runs):
-                    if len(paragraph.runs) == 1:
-                        if c == 1:
-                            if paragraph.runs[0].font.highlight_color == 10:
-                                highlightedFoundationals.append((text, 1))
-                            elif paragraph.runs[0].font.highlight_color == 4:
-                                highlightedFoundationals.append((text, 0.5))
-                        if c == 2:
-                            if paragraph.runs[0].font.highlight_color == 10:
-                                highlightedProficients.append((text, 1))
-                            elif paragraph.runs[0].font.highlight_color == 4:
-                                highlightedProficients.append((text, 0.5))
-                        if c == 3:
-                            if paragraph.runs[0].font.highlight_color == 10:
-                                highlightedExemplarys.append((text, 1))
-                            elif paragraph.runs[0].font.highlight_color == 4:
-                                highlightedExemplarys.append((text, 0.5))
-                    else:
-                        colors_foundational = []
-                        colors_proficient = []
-                        colors_exemplary = []
-                        if (c == 1):
+                    colors_foundational = []
+                    colors_proficient = []
+                    colors_exemplary = []
+                    if (c == 1):
+                        for i in range(len(paragraph.runs)):
+                            colors_foundational.append(paragraph.runs[i].font.highlight_color)  
+                                            
+                    if (c == 2):
+                        for i in range(len(paragraph.runs)):
+                            colors_proficient.append(paragraph.runs[i].font.highlight_color)
 
-                            for i in range(len(paragraph.runs)):
-                                colors_foundational.append(paragraph.runs[i].font.highlight_color)
+                    if (c == 3):
+                        for i in range(len(paragraph.runs)):
+                            colors_exemplary.append(paragraph.runs[i].font.highlight_color)
+                    colors_foundational = list(set(colors_foundational))
+                    colors_proficient = list(set(colors_proficient))
+                    colors_exemplary = list(set(colors_exemplary))
+                    
+                    
+                    if len(colors_foundational) == 1:
+                        if colors_foundational[0] == 11:
+                            highlightedFoundationals.append((text,1))
+                        if colors_foundational[0] == 4:
+                            highlightedFoundationals.append((text,.5))
+                        
+                    elif len(colors_foundational) > 1:
+                        if 11 and 4 in colors_foundational:
+                            highlightedFoundationals.append((text,.75))
+                        elif 11 in colors_foundational:
+                            highlightedFoundationals.append((text,.5))
+                        elif 4 in colors_foundational:
+                            highlightedFoundationals.append([text,.25])
+                    
 
-                        if (c == 2):
-                            for i in range(len(paragraph.runs)):
-                                colors_proficient.append(paragraph.runs[i].font.highlight_color)
+                    if len(colors_proficient) == 1:
+                        if colors_proficient[0] == 11:
+                            highlightedProficients.append((text,1))
+                        if colors_proficient[0] == 4:
+                            highlightedProficients.append((text,.5))
+                        # elif colors_proficient[0]!=None:
+                        #     print(colors_proficient)
 
-                        if (c == 3):
-                            for i in range(len(paragraph.runs)):
-                                colors_exemplary.append(paragraph.runs[i].font.highlight_color)
-                        colors_foundational = list(set(colors_foundational))
-                        colors_proficient = list(set(colors_proficient))
-                        colors_exemplary = list(set(colors_exemplary))
+                        
+                    elif len(colors_proficient) > 1:
+                        if 11 and 4 in colors_proficient:
+                            highlightedProficients.append((text,.75))
+                        elif 11 in colors_proficient:
+                            highlightedProficients.append((text,.5))
+                        elif 4 in colors_proficient:
+                            highlightedProficients.append((text,.25))
 
-                        if len(colors_foundational) == 1:
-                            if colors_foundational[0] == 10:
-                                highlightedFoundationals.append((text, 1))
-                            if colors_foundational[0] == 4:
-                                highlightedFoundationals.append((text, .5))
+                    if len(colors_exemplary) == 1:
+                        if colors_exemplary[0] == 11:
+                            highlightedExemplarys.append((text,1))
+                        if colors_exemplary[0] == 4:
+                            highlightedExemplarys.append((text,.5))
 
-                        elif len(colors_foundational) > 1:
-                            if 10 and 4 in colors_foundational:
-                                highlightedFoundationals.append((text, .75))
-                            elif 10 in colors_foundational:
-                                highlightedFoundationals.append((text, .5))
-                            elif 4 in colors_foundational:
-                                highlightedFoundationals.append([text, .25])
-
-                        if len(colors_proficient) == 1:
-                            if colors_proficient[0] == 10:
-                                highlightedProficients.append((text, 1))
-                            if colors_proficient[0] == 4:
-                                highlightedProficients.append((text, .5))
-
-
-                        elif len(colors_proficient) > 1:
-                            if 10 and 4 in colors_proficient:
-                                highlightedProficients.append((text, .75))
-                            elif 10 in colors_proficient:
-                                highlightedProficients.append((text, .5))
-                            elif 4 in colors_proficient:
-                                highlightedProficients.append((text, .25))
-
-                        if len(colors_exemplary) == 1:
-                            if colors_exemplary[0] == 10:
-                                highlightedExemplarys.append((text, 1))
-                            if colors_exemplary[0] == 4:
-                                highlightedExemplarys.append((text, .5))
-
-
-                        elif len(colors_exemplary) > 1:
-                            if 10 and 4 in colors_exemplary:
-                                highlightedExemplarys.append((text, .75))
-                            elif 10 in colors_exemplary:
-                                highlightedExemplarys.append((text, .5))
-                            elif 4 in colors_exemplary:
-                                highlightedExemplarys.append((text, .25))
-
+                        
+                    elif len(colors_exemplary) > 1:
+                        if 11 and 4 in colors_exemplary:
+                            highlightedExemplarys.append((text,.75))
+                        elif 11 in colors_exemplary:
+                            highlightedExemplarys.append((text,.5))
+                        elif 4 in colors_exemplary:
+                            highlightedExemplarys.append((text,.25))
+                
                 for r2, run in enumerate(paragraph.runs):
                     if run.font.highlight_color is not None:
                         print(
@@ -196,30 +183,13 @@ content_f = calculateScoreFromHighlights(highlightedFoundationals)
 content_p = calculateScoreFromHighlights(highlightedProficients)
 content_e = calculateScoreFromHighlights(highlightedExemplarys)
 skills_f = 0
-skills_p = 13
-skills_e = 14
-habits_f = 16
-habits_p =18
-habits_e =19
+skills_p = 0
+skills_e = 0
+habits_f = 0
+habits_p =0
+habits_e =0
 score = [[name,None,None,content_f,content_p,content_e,None,None,skills_f,skills_p,skills_e,None,None,habits_f,habits_p,habits_e]]
 aoa = [["1/1/2020",4000]]
 request = sheet.values().update(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                                 range="GRADES!B6",valueInputOption="USER_ENTERED",
                                 body = {"values":score}).execute()
-
-
-# Opening the html file
-#HTMLFile = open("test.html", "r")
-
-# Reading the file
-#index = HTMLFile.read()
-
-# soup reader
-#soup = BeautifulSoup(index, 'html.parser')
-
-# find all highlighted lines
-#mydivs = soup.find_all("span", class_="c0 c13")
-#score = [[len(mydivs)]]
-
-#print(score)
-
