@@ -11,9 +11,9 @@ def convert_wd_color_index_to_termcolor(color_index):
         return "blue"
     if (color_index == WD_COLOR_INDEX.TURQUOISE):
         return "cyan"
-    if (color_index == WD_COLOR_INDEX.GREEN):
+    if (color_index == WD_COLOR_INDEX.GREEN): #11
         return "green"
-    if (color_index == WD_COLOR_INDEX.BRIGHT_GREEN):
+    if (color_index == WD_COLOR_INDEX.BRIGHT_GREEN): #4
         return "light_green"
     if (color_index == WD_COLOR_INDEX.RED):
         return "red"
@@ -76,50 +76,50 @@ for t, table in enumerate(document.tables):
                     
                     
                     if len(colors_foundational) == 1:
-                        if colors_foundational[0] == 11:
+                        if colors_foundational[0] == WD_COLOR_INDEX.GREEN:
                             highlightedFoundationals.append((text,1))
-                        if colors_foundational[0] == 4:
+                        if colors_foundational[0] == WD_COLOR_INDEX.BRIGHT_GREEN:
                             highlightedFoundationals.append((text,.5))
                         
                     elif len(colors_foundational) > 1:
-                        if 11 and 4 in colors_foundational:
+                        if WD_COLOR_INDEX.GREEN and WD_COLOR_INDEX.BRIGHT_GREEN in colors_foundational:
                             highlightedFoundationals.append((text,.75))
-                        elif 11 in colors_foundational:
+                        elif WD_COLOR_INDEX.GREEN in colors_foundational:
                             highlightedFoundationals.append((text,.5))
-                        elif 4 in colors_foundational:
+                        elif WD_COLOR_INDEX.BRIGHT_GREEN in colors_foundational:
                             highlightedFoundationals.append([text,.25])
                     
 
                     if len(colors_proficient) == 1:
-                        if colors_proficient[0] == 11:
+                        if colors_proficient[0] == WD_COLOR_INDEX.GREEN:
                             highlightedProficients.append((text,1))
-                        if colors_proficient[0] == 4:
+                        if colors_proficient[0] == WD_COLOR_INDEX.BRIGHT_GREEN:
                             highlightedProficients.append((text,.5))
                         # elif colors_proficient[0]!=None:
                         #     print(colors_proficient)
 
                         
                     elif len(colors_proficient) > 1:
-                        if 11 and 4 in colors_proficient:
+                        if WD_COLOR_INDEX.GREEN and WD_COLOR_INDEX.BRIGHT_GREEN in colors_proficient:
                             highlightedProficients.append((text,.75))
-                        elif 11 in colors_proficient:
+                        elif WD_COLOR_INDEX.GREEN in colors_proficient:
                             highlightedProficients.append((text,.5))
-                        elif 4 in colors_proficient:
+                        elif WD_COLOR_INDEX.BRIGHT_GREEN in colors_proficient:
                             highlightedProficients.append((text,.25))
 
                     if len(colors_exemplary) == 1:
-                        if colors_exemplary[0] == 11:
+                        if colors_exemplary[0] == WD_COLOR_INDEX.GREEN:
                             highlightedExemplarys.append((text,1))
-                        if colors_exemplary[0] == 4:
+                        if colors_exemplary[0] == WD_COLOR_INDEX.BRIGHT_GREEN:
                             highlightedExemplarys.append((text,.5))
 
                         
                     elif len(colors_exemplary) > 1:
-                        if 11 and 4 in colors_exemplary:
+                        if WD_COLOR_INDEX.GREEN and WD_COLOR_INDEX.BRIGHT_GREEN in colors_exemplary:
                             highlightedExemplarys.append((text,.75))
-                        elif 11 in colors_exemplary:
+                        elif WD_COLOR_INDEX.GREEN in colors_exemplary:
                             highlightedExemplarys.append((text,.5))
-                        elif 4 in colors_exemplary:
+                        elif WD_COLOR_INDEX.BRIGHT_GREEN in colors_exemplary:
                             highlightedExemplarys.append((text,.25))
                 
 
