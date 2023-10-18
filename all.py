@@ -1,3 +1,8 @@
+import sys
+import subprocess
+
+subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pandas','-q','--no-color'])
+
 from __future__ import print_function
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
