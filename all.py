@@ -25,31 +25,24 @@ from docx.enum.text import WD_COLOR_INDEX
 from termcolor import colored
 from pathlib import Path
 
-
+# *************************************************************** #
+# Input variables
 
 lightColor = 4
 darkColor = 11
 
+spreadsheetLink = '1-CZJljjGtjP9J2AX5n80jlOdPWBCvum5pm7F8rDS510'
+folderLink = '1tyeoX2ZgmgSW57cS8z-r4S_Z6hKPl2yo'
+
+folderRoot = 'drive_download'
+
+# *************************************************************** #
 
 
-SHOW_EVERYTHING_INCLUDING_NON_HIGHLIGHTED = False
+# *************************************************************** #
+# Functions #
 
-# START OF DRIVE THINGS #
-
-MIMETYPES = {
-        # Drive Document files as MS dox
-        'application/vnd.google-apps.document': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        # Drive Sheets files as MS Excel files.
-        'application/vnd.google-apps.spreadsheet': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        # Drive presentation as MS pptx
-        'application/vnd.google-apps.presentation': 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-        # see https://developers.google.com/drive/v3/web/mime-types
-    }
-EXTENSIONS = {
-        'application/vnd.google-apps.document': '.docx',
-        'application/vnd.google-apps.spreadsheet': '.xlsx',
-        'application/vnd.google-apps.presentation': '.pptx'
-}
+# Drive related
 
 def authenticate():
     gauth = GoogleAuth()
@@ -79,8 +72,7 @@ def escape_fname(name):
 def search_folder(folder_id, root):
     file_list = drive.ListFile({'q': "'%s' in parents and trashed=false" % folder_id}).GetList()
     for file in file_list:
-        # print('title: %s, id: %s, kind: %s' % (file['title'], file['id'], file['mimeType']))
-        # print(file)
+
         if file['mimeType'].split('.')[-1] == 'folder':
             foldername = escape_fname(file['title'])
             create_folder(root,foldername)
@@ -104,43 +96,8 @@ def search_folder(folder_id, root):
 def create_folder(path,name):
     os.mkdir('{}{}'.format(path,escape_fname(name)))
 
-if __name__ == '__main__':
-    drive = authenticate()
 
-    f = open("failed.txt","w+")
-    folder_id = '1tyeoX2ZgmgSW57cS8z-r4S_Z6hKPl2yo'
-    root = 'drive_download'
-    if not os.path.exists(root):
-        os.makedirs(root)
-
-    search_folder(folder_id,root+'/')
-    f.close() 
-
-
-# END OF DRIVE THINGS #
-
-dir_list = os.listdir(root)
-print(dir_list)
-
-
-# If modifying these scopes, delete the file token.json.
-
-# The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = '1-CZJljjGtjP9J2AX5n80jlOdPWBCvum5pm7F8rDS510'
-
-
-        # Call the Sheets API
-#result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-#                                   range="GRADES!A1:G13").execute()
-#values = result.get('values', [])
-
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SERVICE_ACCOUNT_FILE = 'keys.json'
-creds = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-service = build('sheets', 'v4', credentials=creds)
-sheet = service.spreadsheets()
-
+# Terminal related
 
 # for outputting pretty colors to the terminal
 def convert_wd_color_index_to_termcolor(color_index):
@@ -166,6 +123,59 @@ def calculateScoreFromHighlights(highlights):
     for h in highlights:
         score += h[1]
     return score
+
+# *************************************************************** #
+
+SHOW_EVERYTHING_INCLUDING_NON_HIGHLIGHTED = False
+
+# START OF DRIVE THINGS #
+
+MIMETYPES = {
+        # Drive Document files as MS dox
+        'application/vnd.google-apps.document': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        # Drive Sheets files as MS Excel files.
+        'application/vnd.google-apps.spreadsheet': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        # Drive presentation as MS pptx
+        'application/vnd.google-apps.presentation': 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+        # see https://developers.google.com/drive/v3/web/mime-types
+    }
+EXTENSIONS = {
+        'application/vnd.google-apps.document': '.docx',
+        'application/vnd.google-apps.spreadsheet': '.xlsx',
+        'application/vnd.google-apps.presentation': '.pptx'
+}
+
+
+if __name__ == '__main__':
+    drive = authenticate()
+
+    f = open("failed.txt","w+")
+    folder_id = folderLink
+    root = folderRoot
+    if not os.path.exists(root):
+        os.makedirs(root)
+
+    search_folder(folder_id,root+'/')
+    f.close() 
+
+
+# END OF DRIVE THINGS #
+
+dir_list = os.listdir(root)
+print(dir_list)
+
+
+# If modifying these scopes, delete the file token.json.
+
+
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+SERVICE_ACCOUNT_FILE = 'keys.json'
+creds = service_account.Credentials.from_service_account_file(
+        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+service = build('sheets', 'v4', credentials=creds)
+sheet = service.spreadsheets()
+
+# Start of doc things
 
 count = 0
 
@@ -250,9 +260,6 @@ for file in Path(root).iterdir():
                                 highlightedProficients.append((text,1))
                             if colors_proficient[0] == lightColor:
                                 highlightedProficients.append((text,.5))
-                            # elif colors_proficient[0]!=None:
-                            #     print(colors_proficient)
-
                             
                         elif len(colors_proficient) > 1:
                             if darkColor and lightColor in colors_proficient:
@@ -289,29 +296,31 @@ for file in Path(root).iterdir():
         allProficients.append(highlightedProficients)
         allExemplarys.append(highlightedExemplarys)
 
-    print("\n\n========= FOUNDATIONALS ==========")
-    # highlightedFoundationals = list(set(highlightedFoundationals))
-    # print(highlightedFoundationals)
-    # print(calculateScoreFromHighlights(highlightedFoundationals))
-    for i in allFoundational:
-        print(calculateScoreFromHighlights(list(set(i))))
+# ****
+# Console stuff for testing
+# ***
+
+    # print("\n\n========= FOUNDATIONALS ==========")
+    # # highlightedFoundationals = list(set(highlightedFoundationals))
+    # # print(highlightedFoundationals)
+    # # print(calculateScoreFromHighlights(highlightedFoundationals))
+    # for i in allFoundational:
+    #     print(calculateScoreFromHighlights(list(set(i))))
 
 
+    # print("\n\n========= PROFICIENTS ==========")
+    # # highlightedProficients = list(set(highlightedProficients))
+    # # # print(highlightedProficients)
+    # # print(calculateScoreFromHighlights(highlightedProficients))
+    # for i in allProficients:
+    #     print(calculateScoreFromHighlights(list(set(i))))
 
-
-    print("\n\n========= PROFICIENTS ==========")
-    # highlightedProficients = list(set(highlightedProficients))
-    # # print(highlightedProficients)
-    # print(calculateScoreFromHighlights(highlightedProficients))
-    for i in allProficients:
-        print(calculateScoreFromHighlights(list(set(i))))
-
-    print("\n\n========= EXEMPLARYS ==========")
-    # highlightedExemplarys = list(set(highlightedExemplarys))
-    # # print(highlightedExemplarys)
-    # print(calculateScoreFromHighlights(highlightedExemplarys))
-    for i in allExemplarys:
-        print(calculateScoreFromHighlights(list(set(i))))
+    # print("\n\n========= EXEMPLARYS ==========")
+    # # highlightedExemplarys = list(set(highlightedExemplarys))
+    # # # print(highlightedExemplarys)
+    # # print(calculateScoreFromHighlights(highlightedExemplarys))
+    # for i in allExemplarys:
+    #     print(calculateScoreFromHighlights(list(set(i))))
 
 
     content_f = calculateScoreFromHighlights(list(set(allFoundational[0])))
@@ -326,7 +335,7 @@ for file in Path(root).iterdir():
 
     score = [[name,None,None,content_f,content_p,content_e,None,None,skills_f,skills_p,skills_e,None,None,habits_f,habits_p,habits_e]]
     aoa = [["1/1/2020",4000]]
-    request = sheet.values().update(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+    request = sheet.values().update(spreadsheetId=spreadsheetLink,
                                     range=cell_range,valueInputOption="USER_ENTERED",
                                     body = {"values":score}).execute()
     count +=1
