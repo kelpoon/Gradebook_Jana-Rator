@@ -71,3 +71,8 @@ python3 rubricReaderWriter.py
 2. Create a front end/UI
 
 - Create one button that Jana can push that runs all files (Jana wants the least amount of buttons and interactivity as possible)
+
+3. Write scores into the Nubric based on the scores from the Gradebook
+
+- Talk to Jana about how she converts the Gradebook score to Nubric scores
+- Nubric template: https://docs.google.com/spreadsheets/d/1zhUjd6sQ7vHY6O8BgEyjRIbO-U5UTRG-mrrfDENCVKI/edit?usp=sharing
