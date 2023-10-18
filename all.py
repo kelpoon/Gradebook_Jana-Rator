@@ -166,7 +166,7 @@ count = 0
 
 
 for file in Path(root).iterdir():
-    name = "test " + str(count)
+    name = os.listdir(root)[count][:-46] #46 charas is the "end year linear algebra rubric"
     print(name)
 
     cell_range = "GRADES!B" + str(count+6)
