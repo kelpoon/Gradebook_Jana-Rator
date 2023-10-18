@@ -9,7 +9,16 @@
 # Current Features
 
 1. Downloads all files in a selected Google Drive folder as docx files into your libary
-2.
+2. Reads all highlighted lines in the docx file and creates a score based on the highlighted lines
+3. Writes the scores into the Google Sheets Gradebook
+
+How to calculate the score:
+
+- Fully highlighted in dark green = 1 point
+- Fully highlited in light green = 0.5 points
+- Half highlighted in dark green & half highlighted in light green = 0.75 points
+- Half highlighted in dark green and half not highlighted = 0.5 points
+- Half highlighted in light green and half not highlighted = 0.25 points
 
 # Dependencies
 
@@ -57,4 +66,8 @@ python3 rubricReaderWriter.py
 
 1. Testing
 
-- We have not done any testing so far feel free to run unit tests and end-to-end tests. Do both white-box and black-box tests.
+- Run unit tests and end-to-end tests. Do both white-box and black-box tests.
+
+2. Create a front end/UI
+
+- Create one button that Jana can push that runs all files (Jana wants the least amount of buttons and interactivity as possible)
