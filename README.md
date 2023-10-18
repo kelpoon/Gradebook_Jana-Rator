@@ -1,10 +1,15 @@
 # Gradebook Jana-Rator
 
-> For Jana!!!!
+> This project was created by Sid Chatterjee, Henry Harms, and Kelly Poon for the Nueva Software Engineering class fall semester taught by Wes Chao.
 
 # About
 
 `Gradebook Jana-Rator` is an automated system that reads highlighted rubrics and writes a score based off the rubric into Google Sheets.
+
+# Current Features
+
+1. Downloads all files in a selected Google Drive folder as docx files into your libary
+2.
 
 # Dependencies
 
@@ -48,4 +53,8 @@ Then launch the file in terminal:
 python3 rubricReaderWriter.py
 ```
 
-# Next Steps
+# Future Features/To-Dos (in order)
+
+1. Testing
+
+- We have not done any testing so far feel free to run unit tests and end-to-end tests. Do both white-box and black-box tests.
