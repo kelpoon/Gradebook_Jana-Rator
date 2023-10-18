@@ -8,7 +8,7 @@
 
 # Dependencies
 
-This program will automatically install all the dependencies needed for this project. Just make sure to have python3 downloaded.
+This program will automatically install all the dependencies needed for this project. Make sure to have python3 downloaded.
 These are the dependencies that will be downloaded.
 
 - pydrive
@@ -24,7 +24,7 @@ These are the dependencies that will be downloaded.
 
 For this program, you will need to use Google Sheets API Keys and Google Drive API Keys. Download the keys from this Google Drive Folder: https://drive.google.com/drive/folders/1gPxW1DvohpBg_AMAYOhd2Ez_e8VGH2Nr?usp=share_link
 
-Hyperbolic paraboloid
+# Usage
 
 Make a copy of the Gradebook Template:
 https://docs.google.com/spreadsheets/d/1PPI7-hc8vr4L_-Gpjdcrn_5qMwZVEXgVVkf6QiFQJRU/edit?usp=sharing
