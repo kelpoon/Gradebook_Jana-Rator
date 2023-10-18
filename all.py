@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import subprocess
 
@@ -5,9 +6,9 @@ subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pydrive','-q','-
 subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'python-docx','-q','--no-color'])
 subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'docx','-q','--no-color'])
 subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'termcolor','-q','--no-color'])
-# MISSING GOOGLE DRIVE IMPORTS
+subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade','google-api-python-client',
+                       ' google-auth-httplib2','google-auth-oauthlib','-q','--no-color'])
 
-from __future__ import print_function
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 import os
