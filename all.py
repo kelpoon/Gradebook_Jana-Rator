@@ -145,7 +145,7 @@ EXTENSIONS = {
         'application/vnd.google-apps.presentation': '.pptx'
 }
 
-
+# creating the folder, downloading files from drive
 if __name__ == '__main__':
     drive = authenticate()
 
@@ -177,28 +177,31 @@ sheet = service.spreadsheets()
 
 # Start of doc things
 
-count = 0
 
+
+# The big for loop which iterates through all the downloaded files in the folder. Count is used to help iterate through some 
+# of the arrays.
+
+count = 0
 
 for file in Path(root).iterdir():
     name = os.listdir(root)[count][:-46] #46 charas is the "end year linear algebra rubric"
-    print(name)
 
-    cell_range = "GRADES!B" + str(count+6)
-
-    print(cell_range)
+    cell_range = "GRADES!B" + str(count+6) #specific to the gradebook Jana uses (grades tab and B6 onward)
     
     document = docx.Document(file)
 
-    print(colored("\n========= Found %d tables in the document ==========" % (len(document.tables)), "blue"))
+    # For debugging
 
-    # Print out summary of tables found in the document
-    for t, table in enumerate(document.tables):
-        print(colored("Table %d has %d rows and %d columns" % (t, len(table.rows), len(table.columns)), "yellow"))
+    # print(colored("\n========= Found %d tables in the document ==========" % (len(document.tables)), "blue"))
+
+    # # Print out summary of tables found in the document
+    # for t, table in enumerate(document.tables):
+    #     print(colored("Table %d has %d rows and %d columns" % (t, len(table.rows), len(table.columns)), "yellow"))
+
+
 
     # each of these lists will contain tuples of (text, score) which we'll later remove dupes using set
-
-
     allFoundational = []
     allProficients = []
     allExemplarys = []
@@ -206,40 +209,42 @@ for file in Path(root).iterdir():
 
     # Print out detailed contents of each table, along with what is highlighted
     for t, table in enumerate(document.tables):
+        # lists for counting within each table (has dupes)
         highlightedFoundationals = []
         highlightedProficients = []
         highlightedExemplarys = []
-        print("\n\nTABLE %d:" % (t))
-        for r, row in enumerate(table.rows):
-            print("\n-------- Row %d --------" % (r))
-            for c, cell in enumerate(row.cells):
-                print()
-                for p, paragraph in enumerate(cell.paragraphs):
-                    if (len(paragraph.runs) == 0):
+
+        # print("\n\nTABLE %d:" % (t))
+        for r, row in enumerate(table.rows): #goes through rows in each table. NOTE: something is broken with this, number is off so we end up w/ dupes
+            # print("\n-------- Row %d --------" % (r))
+            for c, cell in enumerate(row.cells): 
+                # print()
+                for p, paragraph in enumerate(cell.paragraphs): #each (content) standard in a cell is a paragraph
+                    if (len(paragraph.runs) == 0): #skip cell if no paragraphs
                         continue
                     # score will be the precentage of runs inside this paragraph that are highlighted
-                    numHighlightedRuns = 0
                     text = paragraph.text
-                    for r2, run in enumerate(paragraph.runs):
+                    for r2, run in enumerate(paragraph.runs): #using runs to determine highlighted colors within the paragraphs. We found that when something is highlighted multiple colors, it will split into multiple runs
                         colors_foundational = []
                         colors_proficient = []
                         colors_exemplary = []
-                        if (c == 1):
-                            for i in range(len(paragraph.runs)):
+                        if (c == 1): #1st column is foundational
+                            for i in range(len(paragraph.runs)): #still within single paragraph. just getting all the different colors
                                 colors_foundational.append(paragraph.runs[i].font.highlight_color)  
                                                 
-                        if (c == 2):
+                        if (c == 2): #2nd proficient
                             for i in range(len(paragraph.runs)):
                                 colors_proficient.append(paragraph.runs[i].font.highlight_color)
 
-                        if (c == 3):
+                        if (c == 3): #3rd exemplary
                             for i in range(len(paragraph.runs)):
                                 colors_exemplary.append(paragraph.runs[i].font.highlight_color)
+                        #set data type gets rid of all duplicates
                         colors_foundational = list(set(colors_foundational))
                         colors_proficient = list(set(colors_proficient))
                         colors_exemplary = list(set(colors_exemplary))
                         
-                        
+                        #manually checking cases to determine score for the paragraph
                         if len(colors_foundational) == 1:
                             if colors_foundational[0] == darkColor:
                                 highlightedFoundationals.append((text,1))
@@ -283,15 +288,17 @@ for file in Path(root).iterdir():
                                 highlightedExemplarys.append((text,.5))
                             elif lightColor in colors_exemplary:
                                 highlightedExemplarys.append((text,.25))
-                    
-                    for r2, run in enumerate(paragraph.runs):
-                        if run.font.highlight_color is not None:
-                            print(
-                                colored("*Table %d, Row %d, Cell %d, Paragraph %d, Run %d: %s" % (t, r, c, p, r2, run.text),
-                                        convert_wd_color_index_to_termcolor(run.font.highlight_color)))
-                        else:
-                            if SHOW_EVERYTHING_INCLUDING_NON_HIGHLIGHTED:
-                                print(" Table %d, Row %d, Cell %d, Paragraph %d, Run %d: %s" % (t, r, c, p, r2, run.text))
+                    # More debug code
+
+                    # for r2, run in enumerate(paragraph.runs):
+                    #     if run.font.highlight_color is not None:
+                    #         print(
+                    #             colored("*Table %d, Row %d, Cell %d, Paragraph %d, Run %d: %s" % (t, r, c, p, r2, run.text),
+                    #                     convert_wd_color_index_to_termcolor(run.font.highlight_color)))
+                    #     else:
+                    #         if SHOW_EVERYTHING_INCLUDING_NON_HIGHLIGHTED:
+                    #             print(" Table %d, Row %d, Cell %d, Paragraph %d, Run %d: %s" % (t, r, c, p, r2, run.text))
+        # put all the scores in one list
         allFoundational.append(highlightedFoundationals)
         allProficients.append(highlightedProficients)
         allExemplarys.append(highlightedExemplarys)
@@ -322,7 +329,7 @@ for file in Path(root).iterdir():
     # for i in allExemplarys:
     #     print(calculateScoreFromHighlights(list(set(i))))
 
-
+    #getting rid of duplicates again and calculating scores for content, habits, skills etc.
     content_f = calculateScoreFromHighlights(list(set(allFoundational[0])))
     content_p = calculateScoreFromHighlights(list(set(allProficients[0])))
     content_e = calculateScoreFromHighlights(list(set(allExemplarys[0])))
@@ -335,6 +342,7 @@ for file in Path(root).iterdir():
 
     score = [[name,None,None,content_f,content_p,content_e,None,None,skills_f,skills_p,skills_e,None,None,habits_f,habits_p,habits_e]]
     aoa = [["1/1/2020",4000]]
+    #updating the google sheet
     request = sheet.values().update(spreadsheetId=spreadsheetLink,
                                     range=cell_range,valueInputOption="USER_ENTERED",
                                     body = {"values":score}).execute()
