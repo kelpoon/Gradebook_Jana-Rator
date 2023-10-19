@@ -76,3 +76,5 @@ python3 rubricReaderWriter.py
 
 - Talk to Jana about how she converts the Gradebook score to Nubric scores
 - Nubric template: https://docs.google.com/spreadsheets/d/1zhUjd6sQ7vHY6O8BgEyjRIbO-U5UTRG-mrrfDENCVKI/edit?usp=sharing
+
+4. Generalize program for all/other Jana classes
