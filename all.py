@@ -45,6 +45,11 @@ folderRoot = 'drive_download'
 # Drive related
 
 def authenticate():
+    """
+    Authenticates the loads google drive for folder input
+    :params: none
+    :return: authorized Google Drive
+    """
     gauth = GoogleAuth()
 
     # Tries to load saved client credentials
@@ -67,9 +72,21 @@ def authenticate():
     return drive
 
 def escape_fname(name):
+    """
+    Simple function to reformat folder names
+    :params: foldername
+    :return: reformatted foldername
+    """
     return name.replace('/','_')
 
 def search_folder(folder_id, root):
+    """
+    Iterates through google drive folder until it finds google doc files to download
+    If it finds relevant files, it downloads them to your local machine
+    :param folder_id: URL ID of google drive folder
+    :param root: computer root for download, i.e where the files should download
+    :return: none, but downloads files
+    """
     file_list = drive.ListFile({'q': "'%s' in parents and trashed=false" % folder_id}).GetList()
     for file in file_list:
 
@@ -94,6 +111,12 @@ def search_folder(folder_id, root):
                 f.write(filename+'\n')
 
 def create_folder(path,name):
+    """
+    Creates local file to house downloaded templates
+    :param name: name of created folder
+    :param path: computer root for download, i.e where the files should download
+    :return: none
+    """
     os.mkdir('{}{}'.format(path,escape_fname(name)))
 
 
@@ -101,6 +124,12 @@ def create_folder(path,name):
 
 # for outputting pretty colors to the terminal
 def convert_wd_color_index_to_termcolor(color_index):
+    """
+    Converts color ID to string colors if recognized, else returns white
+    :param name: name of created folder
+    :param path: computer root for download, i.e where the files should download
+    :return: none
+    """
     if (color_index == WD_COLOR_INDEX.BLUE):
         return "blue"
     if (color_index == WD_COLOR_INDEX.TURQUOISE):
@@ -119,6 +148,11 @@ def convert_wd_color_index_to_termcolor(color_index):
 
 
 def calculateScoreFromHighlights(highlights):
+    """
+    Calculates total numerical score by summing highlights
+    :param highlights: array of all highlights and corresponding scores
+    :return: numerical score
+    """
     score = 0
     for h in highlights:
         score += h[1]
