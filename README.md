@@ -25,11 +25,11 @@ How to calculate the score:
 This program will automatically install all the dependencies needed for this project. Make sure to have python3 downloaded.
 These are the dependencies that will be downloaded.
 
-- pydrive
-- python-docx
-- docx
-- termcolor
-- google-api
+> pydrive
+> python-docx
+> docx
+> termcolor
+> google-api
 
 > **Warning**
 > The program will install a folder, change a spreadsheet, and automatically install mutliple dependencies
