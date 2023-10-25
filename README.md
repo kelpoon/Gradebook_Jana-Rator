@@ -6,6 +6,9 @@
 
 `Gradebook Jana-Rator` is an automated system that reads highlighted rubrics and writes a score based off the rubric into Google Sheets.
 
+> **Warning**
+> The program will install a folder, change a spreadsheet, and automatically install mutliple dependencies
+
 # Current Features
 
 1. Downloads all files in a selected Google Drive folder as docx files into your libary
@@ -30,9 +33,6 @@ These are the dependencies that will be downloaded.
 - docx
 - termcolor
 - google-api
-
-> **Warning**
-> The program will install a folder, change a spreadsheet, and automatically install mutliple dependencies
 
 # API Keys
 
