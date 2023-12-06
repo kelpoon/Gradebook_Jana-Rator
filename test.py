@@ -179,12 +179,12 @@ EXTENSIONS = {
         'application/vnd.google-apps.presentation': '.pptx'
 }
 
-def run_rubricReaderWriter(folder_url, gradebook_url):
 # creating the folder, downloading files from drive
+if __name__ == '__main__':
     drive = authenticate()
 
     f = open("failed.txt","w+")
-    folder_id = folder_url
+    folder_id = folderLink
     root = folderRoot
     if not os.path.exists(root):
         os.makedirs(root)
@@ -193,50 +193,52 @@ def run_rubricReaderWriter(folder_url, gradebook_url):
     f.close() 
 
 
-    # END OF DRIVE THINGS #
+# END OF DRIVE THINGS #
 
-    dir_list = os.listdir(root)
-    print(dir_list)
-
-
-    # If modifying these scopes, delete the file token.json.
+dir_list = os.listdir(root)
+print(dir_list)
 
 
-    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-    SERVICE_ACCOUNT_FILE = 'keys.json'
-    creds = service_account.Credentials.from_service_account_file(
+# If modifying these scopes, delete the file token.json.
+
+
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+SERVICE_ACCOUNT_FILE = 'keys.json'
+creds = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-    service = build('sheets', 'v4', credentials=creds)
-    sheet = service.spreadsheets()
+service = build('sheets', 'v4', credentials=creds)
+sheet = service.spreadsheets()
 
-    # Start of doc things
-
-    # The big for loop which iterates through all the downloaded files in the folder. Count is used to help iterate through some 
-    # of the arrays.
-
-    count = 0
-
-    for file in Path(root).iterdir():
-        name = os.listdir(root)[count][:-46] #46 charas is the "end year linear algebra rubric"
-
-        cell_range = "GRADES!B" + str(count+6) #specific to the gradebook Jana uses (grades tab and B6 onward)
-
-        document = docx.Document(file)
-
-        # For debugging
-
-        # print(colored("\n========= Found %d tables in the document ==========" % (len(document.tables)), "blue"))
-
-        # # Print out summary of tables found in the document
-        # for t, table in enumerate(document.tables):
-        #     print(colored("Table %d has %d rows and %d columns" % (t, len(table.rows), len(table.columns)), "yellow"))
+# Start of doc things
 
 
 
-        # each of these lists will contain tuples of (text, score) which we'll later remove dupes using set
-        allFoundational = []
-        allProficients = []
-        allExemplarys = []
+# The big for loop which iterates through all the downloaded files in the folder. Count is used to help iterate through some 
+# of the arrays.
+
+count = 0
+
+for file in Path(root).iterdir():
+    name = os.listdir(root)[count][:-46] #46 charas is the "end year linear algebra rubric"
+
+    cell_range = "GRADES!B" + str(count+6) #specific to the gradebook Jana uses (grades tab and B6 onward)
+
+    document = docx.Document(file)
+
+    # For debugging
+
+    # print(colored("\n========= Found %d tables in the document ==========" % (len(document.tables)), "blue"))
+
+    # # Print out summary of tables found in the document
+    # for t, table in enumerate(document.tables):
+    #     print(colored("Table %d has %d rows and %d columns" % (t, len(table.rows), len(table.columns)), "yellow"))
+
+
+
+    # each of these lists will contain tuples of (text, score) which we'll later remove dupes using set
+    allFoundational = []
+    allProficients = []
+    allExemplarys = []
 
 
     # Print out detailed contents of each table, along with what is highlighted
@@ -263,7 +265,7 @@ def run_rubricReaderWriter(folder_url, gradebook_url):
                         if (c == 1): #1st column is foundational
                             for i in range(len(paragraph.runs)): #still within single paragraph. just getting all the different colors
                                 colors_foundational.append(paragraph.runs[i].font.highlight_color)  
-                                                
+
                         if (c == 2): #2nd proficient
                             for i in range(len(paragraph.runs)):
                                 colors_proficient.append(paragraph.runs[i].font.highlight_color)
@@ -275,14 +277,14 @@ def run_rubricReaderWriter(folder_url, gradebook_url):
                         colors_foundational = list(set(colors_foundational))
                         colors_proficient = list(set(colors_proficient))
                         colors_exemplary = list(set(colors_exemplary))
-                        
+
                         #manually checking cases to determine score for the paragraph
                         if len(colors_foundational) == 1:
                             if colors_foundational[0] == darkColor:
                                 highlightedFoundationals.append((text,1))
                             if colors_foundational[0] == lightColor:
                                 highlightedFoundationals.append((text,.5))
-                            
+
                         elif len(colors_foundational) > 1:
                             if darkColor and lightColor in colors_foundational:
                                 highlightedFoundationals.append((text,.75))
@@ -290,14 +292,14 @@ def run_rubricReaderWriter(folder_url, gradebook_url):
                                 highlightedFoundationals.append((text,.5))
                             elif lightColor in colors_foundational:
                                 highlightedFoundationals.append([text,.25])
-                        
+
 
                         if len(colors_proficient) == 1:
                             if colors_proficient[0] == darkColor:
                                 highlightedProficients.append((text,1))
                             if colors_proficient[0] == lightColor:
                                 highlightedProficients.append((text,.5))
-                            
+
                         elif len(colors_proficient) > 1:
                             if darkColor and lightColor in colors_proficient:
                                 highlightedProficients.append((text,.75))
@@ -312,7 +314,7 @@ def run_rubricReaderWriter(folder_url, gradebook_url):
                             if colors_exemplary[0] == lightColor:
                                 highlightedExemplarys.append((text,.5))
 
-                            
+
                         elif len(colors_exemplary) > 1:
                             if darkColor and lightColor in colors_exemplary:
                                 highlightedExemplarys.append((text,.75))
@@ -335,9 +337,9 @@ def run_rubricReaderWriter(folder_url, gradebook_url):
         allProficients.append(highlightedProficients)
         allExemplarys.append(highlightedExemplarys)
 
-    # ****
-    # Console stuff for testing
-    # ***
+# ****
+# Console stuff for testing
+# ***
 
     # print("\n\n========= FOUNDATIONALS ==========")
     # # highlightedFoundationals = list(set(highlightedFoundationals))
@@ -375,7 +377,7 @@ def run_rubricReaderWriter(folder_url, gradebook_url):
     score = [[name,None,None,content_f,content_p,content_e,None,None,skills_f,skills_p,skills_e,None,None,habits_f,habits_p,habits_e]]
     aoa = [["1/1/2020",4000]]
     #updating the google sheet
-    request = sheet.values().update(spreadsheetId=gradebook_url,
+    request = sheet.values().update(spreadsheetId=spreadsheetLink,
                                     range=cell_range,valueInputOption="USER_ENTERED",
                                     body = {"values":score}).execute()
     count +=1
